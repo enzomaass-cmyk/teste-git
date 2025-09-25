@@ -1,15 +1,25 @@
 const { input, select, checkbox } = require('@inquirer/prompts');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 
 async function salvarMetas() {
     try {
-         await fs.promises.writeFile('metas.json', JSON.stringify(metas, null, 2));
-        mostrarMensagem("Metas salvas com sucesso!");
-    }catch (error) {
-        mostrarMensagem("Erro ao salvar metas:", error);
+        await fs.writeFile('metas.json', JSON.stringify(metas, null, 2));
+        mostrarMensagem("✔️  Metas salvas com sucesso!");
+    } catch (error) {
+        mostrarMensagem("❌ Erro ao salvar metas: ",  error.mensagem);
     }
 }
+
+async function carregarMetas() {
+    try {
+        const dados = await fs.readFile('metas.json', 'utf-8');
+        metas = JSON.parse(dados);
+    } catch (error) {
+
+    }
+    }
+
 
 
 let metas = [];
