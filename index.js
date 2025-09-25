@@ -18,6 +18,8 @@ async function mostrarMenu() {
             { name: "Mostrar todas as metas", value: "mostrar" },
             { name: "Marcar metas como realizadas", value: "marcar" },
             { name: "Mostrar metas realizadas", value: "realizadas" },
+            { name: "Mostrar metas abertas", value: "abertas" },
+            { name: "Deletar metas", value: "deletar" },
             { name: "Sair", value: "sair" }
         ]
     });
@@ -38,10 +40,13 @@ async function executarAcao(opcao) {
             break;
         case "realizadas":
             await metasRealizadas();
-            break;  
+            break; 
         case "abertas":
             await metasAbertas();
-            break;      
+            break;
+        case "deletar":
+            await deletarMetas();
+            break;           
         case "sair":
             break;
         default:
@@ -144,6 +149,51 @@ async function metasRealizadas() {
     mostrarMensagem(`Parabéns Você já concluiu ${realizadas.length} metas! 🎉`);
 
     
+}
+
+async function metasAbertas() {
+    const abertas = metas.filter(meta => !meta.checked);
+
+    if (abertas.length === 0) {
+        mostrarMensagem("❌ Não existem metas abertas!");
+        return;
+    }
+
+    console.log("📋 Metas Abertas:");
+    abertas.forEach((meta, index) => {
+        console.log(`${index + 1}. ${meta.value}`);
+    });
+
+    mostrarMensagem(`Você ainda tem ${abertas.length} metas para concluir. Vamos lá! 🚀`);
+}
+
+async function deletarMetas() {
+    
+    if (metas.length === 0) {
+        mostrarMensagem("❌ Não existem metas cadastradas!");
+        return;
+    }
+
+    const metasParaDeletar = await checkbox({
+        message: "📝 Selecione as metas que deseja deletar:",
+        choices: metas.map(meta => 
+            ({ name: meta.value, 
+               value: meta.value, 
+               checked: false
+            })),
+    });
+
+    if(metasParaDeletar.length === 0) {
+        mostrarMensagem("‼️ Nenhuma meta foi selecionada para deletar")
+        return;
+    }
+
+    metasParaDeletar.forEach(metaParaDeletar => {
+        metas = metas.filter(meta => meta.value !== metaParaDeletar);
+    })
+
+    mostrarMensagem("✅ Metas deletadas com sucesso!");
+
 }
 
 iniciar();
